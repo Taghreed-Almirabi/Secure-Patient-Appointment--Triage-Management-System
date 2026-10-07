@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Medical Staff Authentication Portal — AegisHealth{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto py-8">
+    <div class="glass-card rounded-3xl p-8 shadow-2xl border border-slate-800">
+        
+        <!-- Header -->
+        <div class="text-center pb-6 border-b border-slate-800">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center mx-auto shadow-lg shadow-cyan-500/20 mb-3">
+                <i class="fa-solid fa-user-shield text-white text-2xl"></i>
+            </div>
+            <h2 class="text-xl font-black text-white">Hospital Staff Portal</h2>
+            <p class="text-xs text-slate-400 mt-1">PBKDF2-HMAC-SHA256 Authenticated Access</p>
+        </div>
+
+        <!-- Login Form -->
+        <form method="POST" action="{{ url_for('login_post') }}" class="mt-6 space-y-4">
+            <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1.5">Username</label>
+                <div class="relative">
+                    <i class="fa-solid fa-user absolute left-3.5 top-3 text-slate-500 text-xs"></i>
+                    <input type="text" id="username" name="username" required placeholder="Enter staff username"
+                           class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1.5">Password</label>
+                <div class="relative">
+                    <i class="fa-solid fa-lock absolute left-3.5 top-3 text-slate-500 text-xs"></i>
+                    <input type="password" id="password" name="password" required placeholder="Enter password"
+                           class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                </div>
+            </div>
+
+            <!-- Login Button -->
+            <button type="submit" class="w-full py-3 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2 mt-2">
+                <i class="fa-solid fa-right-to-bracket"></i> Authenticate & Enter
+            </button>
+        </form>
+
+        <!-- Quick Demo Profiles for Presentations -->
+        <div class="mt-8 pt-6 border-t border-slate-800">
+            <p class="text-[11px] font-semibold text-slate-400 text-center mb-3">⚡ Quick-Fill Demo Credentials:</p>
+            <div class="grid grid-cols-3 gap-2">
+                <button type="button" onclick="setCredentials('dr_smith', 'DoctorPass#2026')" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-center transition-all group">
+                    <i class="fa-solid fa-user-doctor text-cyan-400 text-sm group-hover:scale-110 transition-transform"></i>
+                    <span class="block text-[10px] font-bold text-slate-200 mt-1">Dr. Smith</span>
+                    <span class="block text-[9px] text-slate-500">Doctor</span>
+                </button>
+                <button type="button" onclick="setCredentials('nurse_emily', 'NursePass#2026')" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-center transition-all group">
+                    <i class="fa-solid fa-user-nurse text-pink-400 text-sm group-hover:scale-110 transition-transform"></i>
+                    <span class="block text-[10px] font-bold text-slate-200 mt-1">Nurse Emily</span>
+                    <span class="block text-[9px] text-slate-500">Triage</span>
+                </button>
+                <button type="button" onclick="setCredentials('admin_sarah', 'AdminPass#2026')" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-center transition-all group">
+                    <i class="fa-solid fa-shield text-amber-400 text-sm group-hover:scale-110 transition-transform"></i>
+                    <span class="block text-[10px] font-bold text-slate-200 mt-1">Admin</span>
+                    <span class="block text-[9px] text-slate-500">System</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="mt-6 text-center">
+            <a href="{{ url_for('dashboard') }}" class="text-xs text-cyan-400 hover:text-cyan-300">
+                Continue to Dashboard (Guest Mode) &rarr;
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function setCredentials(user, pass) {
+        document.getElementById('username').value = user;
+        document.getElementById('password').value = pass;
+    }
+</script>
+{% endblock %}

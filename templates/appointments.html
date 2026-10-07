@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+{% set active_page = 'appointments' %}
+
+{% block title %}Doctor Appointments & Conflict Management — AegisHealth{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    
+    <!-- Page Header & Title -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+        <div>
+            <h1 class="text-2xl font-black text-white flex items-center gap-2.5">
+                <i class="fa-solid fa-calendar-check text-cyan-400"></i>
+                <span>Doctor Scheduling & Priority Queue Engine</span>
+            </h1>
+            <p class="text-xs text-slate-400 mt-1">
+                Strict double-booking prevention with automated emergency preemption for Category 1/2 triage patients.
+            </p>
+        </div>
+        <div class="flex items-center gap-3">
+            <form method="POST" action="{{ url_for('simulate_conflict_demo') }}">
+                <button type="submit" class="px-4 py-2 text-xs font-bold rounded-xl bg-gradient-to-r from-amber-600 to-rose-600 hover:from-amber-500 hover:to-rose-500 text-white shadow-lg shadow-rose-500/20 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-bolt"></i> Run Emergency Conflict Demo
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Top Layout: Booking Form (5 Cols) + Doctor Schedule & Conflict Monitor (7 Cols) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Left: Appointment Booking Form (5 Cols) -->
+        <div class="lg:col-span-5 space-y-6">
+            <div class="glass-card rounded-2xl p-6 shadow-xl border border-slate-800">
+                <h3 class="text-base font-bold text-white flex items-center gap-2 pb-4 border-b border-slate-800">
+                    <i class="fa-solid fa-calendar-plus text-cyan-400"></i>
+                    <span>Schedule Consultation</span>
+                </h3>
+
+                <form method="POST" action="{{ url_for('book_appointment_route') }}" class="mt-5 space-y-4">
+                    
+                    <!-- Patient Select -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Select Patient *</label>
+                        <select name="patient_id" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                            <option value="">-- Choose Registered Patient --</option>
+                            {% for p in patients %}
+                                <option value="{{ p.id }}">
+                                    #{{ p.id }} {{ p.full_name }} ({{ p.national_id }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Doctor Select -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Consulting Doctor *</label>
+                        <select name="doctor_id" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                            {% for d in doctors %}
+                                <option value="{{ d.id }}" {% if selected_doctor_id == d.id %}selected{% endif %}>
+                                    Dr. {{ d.username }} (Specialist Physician)
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Date & Time Slot -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1.5">Date *</label>
+                            <input type="date" name="appointment_date" required value="{{ default_date }}"
+                                   class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1.5">Time Slot *</label>
+                            <select name="appointment_time_slot" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                                <option value="08:00">08:00 AM</option>
+                                <option value="08:30">08:30 AM</option>
+                                <option value="09:00">09:00 AM</option>
+                                <option value="09:30">09:30 AM</option>
+                                <option value="10:00" selected>10:00 AM</option>
+                                <option value="10:30">10:30 AM</option>
+                                <option value="11:00">11:00 AM</option>
+                                <option value="11:30">11:30 AM</option>
+                                <option value="13:00">01:00 PM</option>
+                                <option value="13:30">01:30 PM</option>
+                                <option value="14:00">02:00 PM</option>
+                                <option value="14:30">02:30 PM</option>
+                                <option value="15:00">03:00 PM</option>
+                                <option value="15:30">03:30 PM</option>
+                                <option value="16:00">04:00 PM</option>
+                                <option value="16:30">04:30 PM</option>
+                                <option value="17:00">05:00 PM</option>
+                                <option value="17:30">05:30 PM</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Clinical Notes -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1.5">Clinical Chief Complaint / Notes</label>
+                        <textarea name="notes" rows="2" placeholder="e.g. Follow-up consultation or acute intake"
+                                  class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"></textarea>
+                    </div>
+
+                    <!-- Priority Override Information Pill -->
+                    <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-[11px] text-slate-400 space-y-1">
+                        <div class="font-semibold text-cyan-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-shield-halved"></i> Priority-Queue Policy:
+                        </div>
+                        <p>If patient is triage Category 1 (Score 100) or Category 2 (Score 75), the system will automatically preempt routine bookings and reschedule routine consultations to the nearest vacant opening.</p>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="w-full py-3 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-check-circle"></i> Confirm & Allocate Slot
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right: Doctor Schedule & Live Roster (7 Cols) -->
+        <div class="lg:col-span-7 space-y-6">
+            <div class="glass-card rounded-2xl p-6 shadow-xl border border-slate-800">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
+                    <div>
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-calendar-days text-cyan-400"></i>
+                            <span>Doctor Schedule Timetable</span>
+                        </h3>
+                        <p class="text-xs text-slate-400">Filter appointments by attending physician</p>
+                    </div>
+                    
+                    <!-- Doctor Filter Form -->
+                    <form method="GET" action="{{ url_for('appointments_page') }}" class="flex items-center gap-2">
+                        <select name="doctor_id" onchange="this.form.submit()" class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+                            {% for d in doctors %}
+                                <option value="{{ d.id }}" {% if selected_doctor_id == d.id %}selected{% endif %}>
+                                    Dr. {{ d.username }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                </div>
+
+                <!-- Schedule List -->
+                <div class="mt-5 space-y-3">
+                    {% for item in schedule_list %}
+                    <div class="p-4 rounded-xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 {% if item.appointment.status.value == 'Emergency_Preempted' %}bg-amber-950/30 border-amber-500/40{% elif item.triage and item.triage.urgency_category == 'Category 1' %}bg-rose-950/30 border-rose-500/40{% else %}bg-slate-900/60 border-slate-800{% endif %}">
+                        
+                        <!-- Left Info -->
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-cyan-950/80 text-cyan-300 border border-cyan-500/30">
+                                    {{ item.appointment.appointment_time }}
+                                </span>
+                                
+                                {% if item.appointment.status.value == 'Scheduled' %}
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-950/60 text-blue-300 border border-blue-500/30">
+                                        Scheduled
+                                    </span>
+                                {% elif item.appointment.status.value == 'Completed' %}
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-950/60 text-emerald-300 border border-emerald-500/30">
+                                        Completed
+                                    </span>
+                                {% elif item.appointment.status.value == 'Emergency_Preempted' %}
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-950/60 text-amber-300 border border-amber-500/30">
+                                        Emergency Reallocated
+                                    </span>
+                                {% else %}
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-800 text-slate-400 border border-slate-700">
+                                        Cancelled
+                                    </span>
+                                {% endif %}
+
+                                {% if item.triage %}
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {% if item.triage.urgency_category == 'Category 1' %}bg-rose-950 text-rose-300 border border-rose-500/40 pulse-critical{% elif item.triage.urgency_category == 'Category 2' %}bg-amber-950 text-amber-300 border border-amber-500/40{% elif item.triage.urgency_category == 'Category 3' %}bg-yellow-950 text-yellow-300 border border-yellow-500/40{% else %}bg-emerald-950 text-emerald-300 border border-emerald-500/40{% endif %}">
+                                        {{ item.triage.urgency_category }} (Score: {{ item.triage.priority_score }})
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            <div class="text-sm font-bold text-white">
+                                {{ item.patient.full_name }}
+                                <span class="text-xs text-slate-400 font-normal">({{ item.patient.national_id }} | Age: {{ item.patient.age }})</span>
+                            </div>
+
+                            {% if item.appointment.notes %}
+                            <p class="text-xs text-slate-400 flex items-start gap-1 pt-0.5">
+                                <i class="fa-solid fa-notes-medical text-cyan-500 mt-0.5 text-[10px]"></i>
+                                <span>{{ item.appointment.notes }}</span>
+                            </p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Right Actions -->
+                        {% if item.appointment.status.value == 'Scheduled' %}
+                        <div class="flex items-center gap-2 self-end sm:self-center">
+                            <form method="POST" action="{{ url_for('complete_appointment_route', appt_id=item.appointment.id) }}">
+                                <button type="submit" title="Mark Completed" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-600/30 transition-colors">
+                                    <i class="fa-solid fa-check mr-1"></i> Done
+                                </button>
+                            </form>
+                            <form method="POST" action="{{ url_for('cancel_appointment_route', appt_id=item.appointment.id) }}">
+                                <button type="submit" title="Cancel Consultation" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-600/30 transition-colors">
+                                    <i class="fa-solid fa-xmark mr-1"></i> Cancel
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="p-8 text-center text-slate-500 text-xs rounded-xl bg-slate-900/30 border border-slate-800/80">
+                        <i class="fa-regular fa-calendar-xmark text-2xl text-slate-600 mb-2 block"></i>
+                        No scheduled appointments found for this doctor. Use the form to allocate slots.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
