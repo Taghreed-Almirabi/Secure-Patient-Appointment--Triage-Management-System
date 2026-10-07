@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% set active_page = 'patients' %}
+
+{% block title %}Patient Registry & Triage Records — AegisHealth{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+
+    <!-- Page Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+        <div>
+            <h1 class="text-2xl font-black text-white flex items-center gap-2.5">
+                <i class="fa-solid fa-hospital-user text-cyan-400"></i>
+                <span>Registered Patients & Clinical Audit Records</span>
+            </h1>
+            <p class="text-xs text-slate-400 mt-1">
+                Centralized electronic health record repository with HMAC-SHA256 data integrity verification.
+            </p>
+        </div>
+        <div>
+            <a href="{{ url_for('dashboard') }}" class="px-4 py-2 text-xs font-bold rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-500/20 transition-all flex items-center gap-2">
+                <i class="fa-solid fa-user-plus"></i> New Patient Intake
+            </a>
+        </div>
+    </div>
+
+    <!-- Patients Data Table Card -->
+    <div class="glass-card rounded-2xl p-6 sm:p-8 shadow-xl border border-slate-800">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div class="relative flex-1 max-w-md">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
+                <input type="text" id="patientSearch" onkeyup="filterTable()" placeholder="Search patient name, National ID, contact..."
+                       class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500">
+            </div>
+            <div class="flex items-center gap-2 text-xs text-slate-400">
+                <span>Total Enrolled: <strong class="text-white">{{ patients_list|length }}</strong> Patients</span>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table id="patientsTable" class="w-full text-left text-xs border-collapse">
+                <thead>
+                    <tr class="border-b border-slate-800 text-slate-400 uppercase text-[10px] tracking-wider bg-slate-900/50">
+                        <th class="py-3.5 px-4">Patient Profile</th>
+                        <th class="py-3.5 px-4">National ID</th>
+                        <th class="py-3.5 px-4">Contact</th>
+                        <th class="py-3.5 px-4">Latest Vitals</th>
+                        <th class="py-3.5 px-4">ESI Category</th>
+                        <th class="py-3.5 px-4">Priority Score</th>
+                        <th class="py-3.5 px-4">HMAC Integrity</th>
+                        <th class="py-3.5 px-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60">
+                    {% for item in patients_list %}
+                    <tr class="hover:bg-slate-800/40 transition-colors">
+                        <!-- Patient Profile -->
+                        <td class="py-4 px-4">
+                            <div class="font-bold text-white text-sm">{{ item.patient.full_name }}</div>
+                            <div class="text-[11px] text-slate-400 font-normal">Age: {{ item.patient.age }} Years | Enrolled: {{ item.patient.created_at[:10] }}</div>
+                        </td>
+
+                        <!-- National ID -->
+                        <td class="py-4 px-4 font-mono font-semibold text-cyan-300">
+                            {{ item.patient.national_id }}
+                        </td>
+
+                        <!-- Contact -->
+                        <td class="py-4 px-4 text-slate-300">
+                            {{ item.patient.contact }}
+                        </td>
+
+                        <!-- Latest Vitals -->
+                        <td class="py-4 px-4 text-slate-300">
+                            {% if item.triage %}
+                                <div class="font-mono text-[11px] space-y-0.5">
+                                    <div><span class="text-slate-500">HR:</span> <strong class="text-white">{{ item.triage.heart_rate }}</strong> bpm | <span class="text-slate-500">BP:</span> <strong class="text-white">{{ item.triage.systolic_bp }}</strong> mmHg</div>
+                                    <div><span class="text-slate-500">SpO2:</span> <strong class="text-white">{{ item.triage.sp02 }}%</strong> | <span class="text-slate-500">Pain:</span> <strong class="text-amber-400">{{ item.triage.pain_score }}/10</strong></div>
+                                </div>
+                            {% else %}
+                                <span class="text-slate-500 italic">No triage vitals recorded</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- ESI Category -->
+                        <td class="py-4 px-4">
+                            {% if item.triage %}
+                                {% if item.triage.urgency_category == 'Category 1' %}
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-950/80 text-rose-300 border border-rose-500/50 pulse-critical">
+                                        Cat 1 (Immediate)
+                                    </span>
+                                {% elif item.triage.urgency_category == 'Category 2' %}
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-950/80 text-amber-300 border border-amber-500/50">
+                                        Cat 2 (Emergent)
+                                    </span>
+                                {% elif item.triage.urgency_category == 'Category 3' %}
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-yellow-950/80 text-yellow-300 border border-yellow-500/50">
+                                        Cat 3 (Urgent)
+                                    </span>
+                                {% else %}
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-500/50">
+                                        Cat 4 (Routine)
+                                    </span>
+                                {% endif %}
+                            {% else %}
+                                <span class="text-slate-500 text-[11px]">-</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Priority Score -->
+                        <td class="py-4 px-4 font-black text-sm text-white">
+                            {% if item.triage %}
+                                {{ item.triage.priority_score }}
+                            {% else %}
+                                <span class="text-slate-500 font-normal">-</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- HMAC Integrity -->
+                        <td class="py-4 px-4">
+                            {% if item.triage and item.is_verified %}
+                                <span class="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-400 bg-emerald-950/40 px-2.5 py-1 rounded-full border border-emerald-500/30" title="Checksum: {{ item.triage.checksum }}">
+                                    <i class="fa-solid fa-shield-check text-xs"></i> HMAC Valid
+                                </span>
+                            {% elif item.triage %}
+                                <span class="inline-flex items-center gap-1 text-[10px] font-semibold text-rose-400 bg-rose-950/40 px-2.5 py-1 rounded-full border border-rose-500/30">
+                                    <i class="fa-solid fa-triangle-exclamation text-xs"></i> Tampered
+                                </span>
+                            {% else %}
+                                <span class="text-slate-500 text-[11px]">N/A</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Actions -->
+                        <td class="py-4 px-4 text-right">
+                            <a href="{{ url_for('appointments_page', patient_id=item.patient.id) }}" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 transition-colors inline-flex items-center gap-1">
+                                <i class="fa-solid fa-calendar-plus text-[10px]"></i> Book
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="py-8 text-center text-slate-500 text-xs">
+                            No registered patients found in the database.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function filterTable() {
+        const input = document.getElementById('patientSearch');
+        const filter = input.value.toLowerCase();
+        const table = document.getElementById('patientsTable');
+        const tr = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < tr.length; i++) {
+            const rowText = tr[i].textContent || tr[i].innerText;
+            if (rowText.toLowerCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+</script>
+{% endblock %}
