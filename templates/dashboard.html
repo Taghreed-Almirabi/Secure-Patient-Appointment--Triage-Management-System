@@ -1,369 +1,468 @@
 {% extends "base.html" %}
 {% set active_page = 'dashboard' %}
 
-{% block title %}Clinical Triage Intake & Dashboard — AegisHealth{% endblock %}
+{% block title %}Clinical Triage Command Center — AegisHealth{% endblock %}
 
 {% block content %}
 <div class="space-y-8">
 
-    <!-- KPI Statistics Grid -->
+    <!-- Top KPI Statistics Bar -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <!-- Stat 1: Total Patients -->
-        <div class="glass-card rounded-2xl p-5 relative overflow-hidden group hover:border-cyan-500/40 transition-all">
+        
+        <!-- KPI 1: Total Enrolled Patients -->
+        <div class="glass-card glass-card-hover rounded-2xl p-5 relative overflow-hidden group">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Patients</p>
-                    <h3 class="text-3xl font-extrabold text-white mt-1">{{ stats.total_patients }}</h3>
-                    <p class="text-xs text-cyan-400 mt-1 flex items-center gap-1">
-                        <i class="fa-solid fa-arrow-trend-up"></i> Registered in Database
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Patients</p>
+                    <h3 class="text-3xl font-extrabold text-white mt-1 tracking-tight">{{ stats.total_patients }}</h3>
+                    <p class="text-[11px] text-cyan-400 mt-1.5 flex items-center gap-1.5 font-medium">
+                        <i class="fa-solid fa-database"></i> SQLite Master Records
                     </p>
                 </div>
-                <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform duration-300">
                     <i class="fa-solid fa-users"></i>
                 </div>
             </div>
-            <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-cyan-500/10 rounded-full blur-xl pointer-events-none"></div>
+            <div class="absolute -bottom-8 -right-8 w-28 h-28 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
         </div>
 
-        <!-- Stat 2: Critical Cases -->
-        <div class="glass-card rounded-2xl p-5 relative overflow-hidden group hover:border-rose-500/40 transition-all">
+        <!-- KPI 2: Critical / Emergency Cases -->
+        <div class="glass-card glass-card-hover rounded-2xl p-5 relative overflow-hidden group">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Emergency Cases (Cat 1/2)</p>
-                    <h3 class="text-3xl font-extrabold text-rose-400 mt-1">{{ stats.critical_cases }}</h3>
-                    <p class="text-xs text-rose-300 mt-1 flex items-center gap-1">
-                        <i class="fa-solid fa-circle-exclamation"></i> High Priority Override
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-rose-400">Emergency Queue (Cat 1/2)</p>
+                    <h3 class="text-3xl font-extrabold text-rose-400 mt-1 tracking-tight">{{ stats.critical_cases }}</h3>
+                    <p class="text-[11px] text-rose-300/80 mt-1.5 flex items-center gap-1.5 font-medium">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Immediate Preemption
                     </p>
                 </div>
-                <div class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                <div class="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform duration-300">
                     <i class="fa-solid fa-truck-medical"></i>
                 </div>
             </div>
-            <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-rose-500/10 rounded-full blur-xl pointer-events-none"></div>
+            <div class="absolute -bottom-8 -right-8 w-28 h-28 bg-rose-500/10 rounded-full blur-2xl pointer-events-none"></div>
         </div>
 
-        <!-- Stat 3: Active Appointments -->
-        <div class="glass-card rounded-2xl p-5 relative overflow-hidden group hover:border-blue-500/40 transition-all">
+        <!-- KPI 3: Scheduled Consultations -->
+        <div class="glass-card glass-card-hover rounded-2xl p-5 relative overflow-hidden group">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Scheduled Consults</p>
-                    <h3 class="text-3xl font-extrabold text-blue-400 mt-1">{{ stats.scheduled_appointments }}</h3>
-                    <p class="text-xs text-blue-300 mt-1 flex items-center gap-1">
-                        <i class="fa-solid fa-calendar-check"></i> Conflict-Free Managed
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Active Consultations</p>
+                    <h3 class="text-3xl font-extrabold text-blue-400 mt-1 tracking-tight">{{ stats.scheduled_appointments }}</h3>
+                    <p class="text-[11px] text-blue-300/80 mt-1.5 flex items-center gap-1.5 font-medium">
+                        <i class="fa-solid fa-calendar-check"></i> Conflict-Free Slots
                     </p>
                 </div>
-                <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                <div class="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/30 text-blue-400 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform duration-300">
                     <i class="fa-solid fa-calendar-days"></i>
                 </div>
             </div>
-            <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-blue-500/10 rounded-full blur-xl pointer-events-none"></div>
+            <div class="absolute -bottom-8 -right-8 w-28 h-28 bg-blue-500/10 rounded-full blur-2xl pointer-events-none"></div>
         </div>
 
-        <!-- Stat 4: Active Doctors -->
-        <div class="glass-card rounded-2xl p-5 relative overflow-hidden group hover:border-emerald-500/40 transition-all">
+        <!-- KPI 4: On-Duty Physicians -->
+        <div class="glass-card glass-card-hover rounded-2xl p-5 relative overflow-hidden group">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">On-Duty Doctors</p>
-                    <h3 class="text-3xl font-extrabold text-emerald-400 mt-1">{{ stats.total_doctors }}</h3>
-                    <p class="text-xs text-emerald-300 mt-1 flex items-center gap-1">
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">On-Duty Doctors</p>
+                    <h3 class="text-3xl font-extrabold text-emerald-400 mt-1 tracking-tight">{{ stats.total_doctors }}</h3>
+                    <p class="text-[11px] text-emerald-300/80 mt-1.5 flex items-center gap-1.5 font-medium">
                         <i class="fa-solid fa-user-doctor"></i> Available 08:00 - 18:00
                     </p>
                 </div>
-                <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform duration-300">
                     <i class="fa-solid fa-stethoscope"></i>
                 </div>
             </div>
-            <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl pointer-events-none"></div>
+            <div class="absolute -bottom-8 -right-8 w-28 h-28 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
         </div>
     </div>
 
-    <!-- Main Triage Calculator & Live Assessment Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <!-- Main Workspace Grid (7 cols Intake Form | 5 cols Live Assessment Card) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
         <!-- Left: Intake & Vitals Form (7 Cols) -->
         <div class="lg:col-span-7 space-y-6">
-            <div class="glass-card rounded-2xl p-6 sm:p-8 shadow-xl border border-slate-800">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-800/90 relative overflow-hidden">
                 <div class="flex items-center justify-between pb-5 border-b border-slate-800">
                     <div>
-                        <h2 class="text-xl font-bold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-notes-medical text-cyan-400"></i>
+                        <h2 class="text-lg font-black text-white flex items-center gap-2.5">
+                            <span class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-sm border border-cyan-500/30">
+                                <i class="fa-solid fa-file-waveform"></i>
+                            </span>
                             <span>Patient Intake & Triage Assessment</span>
                         </h2>
-                        <p class="text-xs text-slate-400 mt-0.5">Deterministic Emergency Severity Index (ESI) scoring engine</p>
+                        <p class="text-xs text-slate-400 mt-1">Deterministic Emergency Severity Index (ESI) scoring engine with HMAC verification</p>
                     </div>
-                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                        Intake Desk
+                    <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
+                        <i class="fa-solid fa-clipboard-check text-[10px]"></i> Intake Desk
                     </span>
                 </div>
 
                 <!-- Form -->
                 <form id="triageForm" method="POST" action="{{ url_for('process_triage') }}" class="mt-6 space-y-6">
                     
-                    <!-- Section: Patient Demographics -->
-                    <div>
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-cyan-400 mb-3 flex items-center gap-1.5">
-                            <i class="fa-solid fa-id-card"></i> 1. Patient Identification
-                        </h4>
+                    <!-- Section 1: Demographics -->
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
+                                <i class="fa-solid fa-id-card"></i> 1. Patient Demographics
+                            </h4>
+                            <span class="text-[10px] text-slate-500 font-mono">* Required fields</span>
+                        </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-medium text-slate-300 mb-1.5">Full Name *</label>
-                                <input type="text" name="full_name" required placeholder="e.g. John Carter"
-                                       class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all">
+                                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Full Patient Name *</label>
+                                <input type="text" id="full_name" name="full_name" required placeholder="e.g. John Carter"
+                                       class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all shadow-inner">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-slate-300 mb-1.5">National ID *</label>
-                                <input type="text" name="national_id" required placeholder="e.g. NAT-1099"
-                                       class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all">
+                                <label class="block text-xs font-semibold text-slate-300 mb-1.5">National ID / Passport *</label>
+                                <input type="text" id="national_id" name="national_id" required placeholder="e.g. NAT-1099"
+                                       class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 font-mono focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all shadow-inner">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-slate-300 mb-1.5">Age (Years) *</label>
-                                <input type="number" name="age" min="0" max="130" required placeholder="e.g. 45"
-                                       class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all">
+                                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Age (Years) *</label>
+                                <input type="number" id="age" name="age" min="0" max="130" required placeholder="e.g. 45"
+                                       class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all shadow-inner">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-slate-300 mb-1.5">Contact Number *</label>
-                                <input type="text" name="contact" required placeholder="e.g. +1-555-0182"
-                                       class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all">
+                                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Contact Number *</label>
+                                <input type="text" id="contact" name="contact" required placeholder="e.g. +1-555-0182"
+                                       class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all shadow-inner">
                             </div>
                         </div>
                     </div>
 
-                    <!-- Section: Physiological Vital Signs -->
-                    <div class="pt-4 border-t border-slate-800">
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-cyan-400 mb-3 flex items-center gap-1.5">
-                            <i class="fa-solid fa-heart-pulse"></i> 2. Clinical Vital Parameters
-                        </h4>
+                    <!-- Section 2: Clinical Vitals -->
+                    <div class="pt-5 border-t border-slate-800 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
+                                <i class="fa-solid fa-heart-pulse"></i> 2. Physiological Vital Parameters
+                            </h4>
+                            <span class="text-[10px] text-cyan-400/80 font-mono">Real-time Reactive</span>
+                        </div>
+
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <!-- Heart Rate -->
-                            <div>
-                                <label class="block text-xs font-medium text-slate-300 mb-1.5">
-                                    Heart Rate <span class="text-slate-500">(bpm)</span>
-                                </label>
-                                <div class="relative">
-                                    <input type="number" id="heart_rate" name="heart_rate" min="20" max="300" required value="75"
-                                           class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all">
-                                    <span class="absolute right-3 top-2.5 text-xs text-slate-500">bpm</span>
+                            <div class="p-3.5 rounded-2xl bg-slate-900/70 border border-slate-800">
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <label class="text-xs font-semibold text-slate-300 flex items-center gap-1">
+                                        <i class="fa-solid fa-heart text-rose-500 text-[11px]"></i> Heart Rate
+                                    </label>
+                                    <span class="text-[10px] font-mono text-slate-400">bpm</span>
                                 </div>
-                                <span class="text-[10px] text-slate-500 mt-1 block">>140 Cat 1 | 110-140 Cat 2</span>
+                                <input type="number" id="heart_rate" name="heart_rate" min="20" max="300" required value="75"
+                                       oninput="calculateLiveTriage()"
+                                       class="w-full bg-slate-950 border border-slate-700/90 rounded-xl px-3.5 py-2 text-sm font-mono font-bold text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all">
+                                <div class="flex justify-between text-[9px] text-slate-400 font-mono mt-2">
+                                    <span>>140: Cat 1</span>
+                                    <span>110-140: Cat 2</span>
+                                </div>
                             </div>
 
                             <!-- SpO2 -->
-                            <div>
-                                <label class="block text-xs font-medium text-slate-300 mb-1.5">
-                                    Blood Oxygen <span class="text-slate-500">(SpO2 %)</span>
-                                </label>
-                                <div class="relative">
-                                    <input type="number" id="sp02" name="sp02" min="0" max="100" step="0.1" required value="98.0"
-                                           class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all">
-                                    <span class="absolute right-3 top-2.5 text-xs text-slate-500">%</span>
+                            <div class="p-3.5 rounded-2xl bg-slate-900/70 border border-slate-800">
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <label class="text-xs font-semibold text-slate-300 flex items-center gap-1">
+                                        <i class="fa-solid fa-lungs text-cyan-400 text-[11px]"></i> Blood Oxygen
+                                    </label>
+                                    <span class="text-[10px] font-mono text-slate-400">SpO2 %</span>
                                 </div>
-                                <span class="text-[10px] text-slate-500 mt-1 block"><90% Cat 1 | 90-94% Cat 2</span>
+                                <input type="number" id="sp02" name="sp02" min="0" max="100" step="0.1" required value="98.0"
+                                       oninput="calculateLiveTriage()"
+                                       class="w-full bg-slate-950 border border-slate-700/90 rounded-xl px-3.5 py-2 text-sm font-mono font-bold text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all">
+                                <div class="flex justify-between text-[9px] text-slate-400 font-mono mt-2">
+                                    <span><90%: Cat 1</span>
+                                    <span>90-94%: Cat 2</span>
+                                </div>
                             </div>
 
                             <!-- Systolic BP -->
-                            <div>
-                                <label class="block text-xs font-medium text-slate-300 mb-1.5">
-                                    Systolic BP <span class="text-slate-500">(mmHg)</span>
-                                </label>
-                                <div class="relative">
-                                    <input type="number" id="systolic_bp" name="systolic_bp" min="30" max="300" required value="120"
-                                           class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all">
-                                    <span class="absolute right-3 top-2.5 text-xs text-slate-500">mmHg</span>
+                            <div class="p-3.5 rounded-2xl bg-slate-900/70 border border-slate-800">
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <label class="text-xs font-semibold text-slate-300 flex items-center gap-1">
+                                        <i class="fa-solid fa-gauge text-blue-400 text-[11px]"></i> Systolic BP
+                                    </label>
+                                    <span class="text-[10px] font-mono text-slate-400">mmHg</span>
                                 </div>
-                                <span class="text-[10px] text-slate-500 mt-1 block"><80 mmHg Cat 1</span>
+                                <input type="number" id="systolic_bp" name="systolic_bp" min="30" max="300" required value="120"
+                                       oninput="calculateLiveTriage()"
+                                       class="w-full bg-slate-950 border border-slate-700/90 rounded-xl px-3.5 py-2 text-sm font-mono font-bold text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all">
+                                <div class="flex justify-between text-[9px] text-slate-400 font-mono mt-2">
+                                    <span><80: Cat 1 (Shock)</span>
+                                    <span>Normal: 120</span>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Pain Scale Slider -->
-                        <div class="mt-5 p-4 rounded-xl bg-slate-900/50 border border-slate-800">
-                            <div class="flex items-center justify-between mb-2">
-                                <label class="text-xs font-medium text-slate-300 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-face-frown text-amber-400"></i>
-                                    Pain Scale (VAS 0 - 10)
+                        <!-- Pain Scale Slider with Live Dynamic Spectrum -->
+                        <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
+                            <div class="flex items-center justify-between mb-3">
+                                <label class="text-xs font-semibold text-slate-200 flex items-center gap-2">
+                                    <i class="fa-solid fa-face-grimace text-amber-400"></i>
+                                    <span>Pain Severity Scale (VAS 0 - 10)</span>
                                 </label>
-                                <span id="painDisplay" class="text-sm font-bold px-3 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-cyan-400">
-                                    2 - Mild
+                                <span id="painBadge" class="text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 transition-all">
+                                    😊 2 — Mild Pain
                                 </span>
                             </div>
+                            
                             <input type="range" id="pain_score" name="pain_score" min="0" max="10" value="2"
-                                   class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-500"
-                                   oninput="updatePainDisplay(this.value)">
-                            <div class="flex justify-between text-[10px] text-slate-500 mt-1">
-                                <span>0: No Pain</span>
-                                <span>1-4: Mild</span>
-                                <span>5-7: Moderate (Cat 3)</span>
-                                <span>8-10: Severe (Cat 2)</span>
+                                   class="w-full h-2.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400 transition-all"
+                                   oninput="updatePainVisuals(this.value)">
+                            
+                            <div class="flex justify-between text-[10px] text-slate-400 font-mono mt-2 px-1">
+                                <span class="text-emerald-400">0: None</span>
+                                <span class="text-teal-300">1-4: Mild</span>
+                                <span class="text-yellow-400">5-7: Moderate (Cat 3)</span>
+                                <span class="text-rose-400">8-10: Severe (Cat 2)</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Preset Quick Fill Demo Buttons -->
-                    <div class="p-3 rounded-xl bg-slate-900/30 border border-slate-800/80">
-                        <p class="text-[11px] font-semibold text-slate-400 mb-2">⚡ Quick-Load Clinical Demo Profiles:</p>
-                        <div class="flex flex-wrap gap-2">
-                            <button type="button" onclick="loadPreset('critical')" class="px-2.5 py-1 text-xs rounded-lg bg-rose-950/40 text-rose-300 border border-rose-600/30 hover:bg-rose-900/50 transition-colors">
-                                Critical (Cat 1: SpO2 84%, HR 152)
+                    <!-- Clinical Demo Quick Presets -->
+                    <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800/90">
+                        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2.5 flex items-center gap-1.5">
+                            <i class="fa-solid fa-bolt text-amber-400"></i>
+                            <span>Instant Clinical Demo Presets:</span>
+                        </p>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                            <button type="button" onclick="loadPreset('critical')" 
+                                    class="px-2.5 py-2 text-xs font-bold rounded-xl bg-rose-950/40 text-rose-300 border border-rose-500/40 hover:bg-rose-900/60 hover:border-rose-400 transition-all flex flex-col items-center gap-1">
+                                <span class="text-[10px] uppercase tracking-wide opacity-80">Cat 1</span>
+                                <span>🚨 Critical</span>
                             </button>
-                            <button type="button" onclick="loadPreset('emergent')" class="px-2.5 py-1 text-xs rounded-lg bg-amber-950/40 text-amber-300 border border-amber-600/30 hover:bg-amber-900/50 transition-colors">
-                                Emergent (Cat 2: SpO2 92%, Pain 8)
+                            <button type="button" onclick="loadPreset('emergent')" 
+                                    class="px-2.5 py-2 text-xs font-bold rounded-xl bg-orange-950/40 text-orange-300 border border-orange-500/40 hover:bg-orange-900/60 hover:border-orange-400 transition-all flex flex-col items-center gap-1">
+                                <span class="text-[10px] uppercase tracking-wide opacity-80">Cat 2</span>
+                                <span>⚠️ Emergent</span>
                             </button>
-                            <button type="button" onclick="loadPreset('urgent')" class="px-2.5 py-1 text-xs rounded-lg bg-yellow-950/40 text-yellow-300 border border-yellow-600/30 hover:bg-yellow-900/50 transition-colors">
-                                Urgent (Cat 3: HR 105, Pain 6)
+                            <button type="button" onclick="loadPreset('urgent')" 
+                                    class="px-2.5 py-2 text-xs font-bold rounded-xl bg-yellow-950/40 text-yellow-300 border border-yellow-500/40 hover:bg-yellow-900/60 hover:border-yellow-400 transition-all flex flex-col items-center gap-1">
+                                <span class="text-[10px] uppercase tracking-wide opacity-80">Cat 3</span>
+                                <span>⚡ Urgent</span>
                             </button>
-                            <button type="button" onclick="loadPreset('routine')" class="px-2.5 py-1 text-xs rounded-lg bg-emerald-950/40 text-emerald-300 border border-emerald-600/30 hover:bg-emerald-900/50 transition-colors">
-                                Routine (Cat 4: Normal Vitals)
+                            <button type="button" onclick="loadPreset('routine')" 
+                                    class="px-2.5 py-2 text-xs font-bold rounded-xl bg-emerald-950/40 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-900/60 hover:border-emerald-400 transition-all flex flex-col items-center gap-1">
+                                <span class="text-[10px] uppercase tracking-wide opacity-80">Cat 4</span>
+                                <span>🟢 Routine</span>
                             </button>
                         </div>
                     </div>
 
-                    <!-- Submit & Live Calculate Buttons -->
-                    <div class="flex items-center gap-3 pt-2">
-                        <button type="button" onclick="calculateLiveTriage()" class="flex-1 px-5 py-3 rounded-xl font-bold text-sm bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 shadow-md transition-all flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-calculator"></i> Live Calculate Preview
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row items-center gap-3 pt-2">
+                        <button type="button" onclick="calculateLiveTriage()" 
+                                class="w-full sm:w-1/2 px-5 py-3 rounded-2xl font-bold text-xs bg-slate-800/90 hover:bg-slate-700/90 text-cyan-300 border border-cyan-500/40 shadow-md transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-arrows-rotate"></i> Re-Calculate Preview
                         </button>
-                        <button type="submit" class="flex-1 px-5 py-3 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-file-medical"></i> Save & Submit Record
+                        <button type="submit" 
+                                class="w-full sm:w-1/2 px-5 py-3 rounded-2xl font-bold text-xs text-white bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 shadow-lg shadow-cyan-500/25 transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-floppy-disk"></i> Commit & Save Record
                         </button>
                     </div>
                 </form>
             </div>
         </div>
 
-        <!-- Right: Real-time Live Calculation Result Card (5 Cols) -->
-        <div class="lg:col-span-5 space-y-6">
-            <div id="triageResultCard" class="glass-card rounded-2xl p-6 sm:p-8 shadow-xl border border-slate-800 sticky top-24">
+        <!-- Right: Real-time Live Assessment Output (5 Cols) -->
+        <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
+            <div id="triageResultCard" class="glass-card rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-800/90 relative overflow-hidden transition-all duration-300">
+                
+                <!-- Output Card Header -->
                 <div class="flex items-center justify-between pb-4 border-b border-slate-800">
-                    <h3 class="text-base font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-square-poll-vertical text-cyan-400"></i>
-                        <span>Triage Evaluation Output</span>
-                    </h3>
-                    <span id="liveBadge" class="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                        Live Ready
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-chart-pie"></i>
+                        </div>
+                        <h3 class="text-sm font-extrabold text-white">Live Triage Evaluation</h3>
+                    </div>
+                    <span id="liveStatusPill" class="text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        Synchronized
                     </span>
                 </div>
 
-                <!-- Result Content -->
-                <div id="resultContent" class="mt-6 space-y-5">
-                    
-                    <!-- Category Banner -->
-                    <div id="categoryBanner" class="p-5 rounded-2xl bg-emerald-950/40 border border-emerald-500/40 text-center relative overflow-hidden">
-                        <span id="categoryLabel" class="text-xs font-bold uppercase tracking-widest text-emerald-400">Category 4</span>
-                        <h2 id="categoryTitle" class="text-2xl font-black text-white mt-1">Non-Urgent / Routine</h2>
-                        <p id="waitLimit" class="text-xs text-emerald-300 mt-1 font-medium">Recommended Max Wait: ≤ 120 minutes</p>
-                    </div>
-
-                    <!-- Metric Scores -->
-                    <div class="grid grid-cols-2 gap-3 text-center">
-                        <div class="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800">
-                            <span class="text-[11px] text-slate-400 uppercase font-semibold">Priority Score</span>
-                            <div id="priorityScoreDisplay" class="text-2xl font-black text-cyan-400 mt-0.5">20 <span class="text-xs text-slate-500 font-normal">/ 100</span></div>
-                        </div>
-                        <div class="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800">
-                            <span class="text-[11px] text-slate-400 uppercase font-semibold">Preemption Status</span>
-                            <div id="preemptionEligibility" class="text-xs font-bold text-slate-300 mt-2">Standard Queue</div>
-                        </div>
-                    </div>
-
-                    <!-- Clinical Rationale -->
-                    <div>
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Clinical Decision Breakdown:</h4>
-                        <ul id="rationaleList" class="space-y-1.5 text-xs text-slate-300">
-                            <li class="flex items-start gap-2 p-2 rounded-lg bg-slate-900/40 border border-slate-800/80">
-                                <i class="fa-solid fa-circle-check text-emerald-400 mt-0.5 text-[11px]"></i>
-                                <span>All vital signs within baseline physiological parameters.</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <!-- Security & Cryptographic Seal Badge -->
-                    <div class="pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
-                        <span class="flex items-center gap-1.5">
-                            <i class="fa-solid fa-shield-halved text-cyan-400"></i> HMAC Tamper-Proof
+                <!-- Single Category Hero Banner -->
+                <div id="categoryHeroBanner" class="mt-5 p-5 rounded-2xl border text-center relative overflow-hidden transition-all duration-300 bg-emerald-950/40 border-emerald-500/50">
+                    <div class="relative z-10">
+                        <span id="categoryPill" class="inline-block text-[10px] font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 mb-1.5">
+                            Category 4
                         </span>
-                        <span class="font-mono text-[11px] text-cyan-400">SHA-256 Verified</span>
+                        <h2 id="categoryTitle" class="text-2xl font-black text-white tracking-tight">Non-Urgent / Routine</h2>
+                        <div class="inline-flex items-center gap-1.5 mt-2 px-3 py-1 rounded-lg bg-slate-950/60 text-xs text-emerald-300 font-medium">
+                            <i class="fa-regular fa-clock text-[11px]"></i>
+                            <span id="waitLimit">Max Recommended Wait: ≤ 120 min</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Radial Priority Score & Preemption Queue Cards -->
+                <div class="grid grid-cols-2 gap-3 mt-4">
+                    <!-- Score Meter -->
+                    <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800/80 flex flex-col items-center justify-center text-center">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Priority Index</span>
+                        <div class="flex items-baseline gap-1">
+                            <span id="scoreNumber" class="text-3xl font-black text-cyan-400">20</span>
+                            <span class="text-xs text-slate-500 font-mono">/ 100</span>
+                        </div>
                     </div>
 
-                    <!-- Action Link -->
-                    <div class="pt-2">
-                        <a href="{{ url_for('appointments_page') }}" class="w-full py-2.5 rounded-xl font-bold text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all flex items-center justify-center gap-2">
-                            <span>Proceed to Doctor Scheduling</span>
-                            <i class="fa-solid fa-arrow-right text-cyan-400"></i>
-                        </a>
+                    <!-- Preemption Status -->
+                    <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800/80 flex flex-col items-center justify-center text-center">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Queue Action</span>
+                        <div id="preemptionStatusBadge" class="mt-1">
+                            <span class="text-xs font-bold text-emerald-400 bg-emerald-950/40 px-2.5 py-1 rounded-full border border-emerald-500/30">
+                                Routine Queue
+                            </span>
+                        </div>
                     </div>
+                </div>
+
+                <!-- Clinical Decision Rationale Breakdown -->
+                <div class="mt-4 space-y-2">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                        <i class="fa-solid fa-list-check text-cyan-400"></i> Clinical Rationale & Criteria:
+                    </span>
+                    <ul id="rationaleList" class="space-y-1.5 text-xs text-slate-300">
+                        <li class="flex items-start gap-2 p-2.5 rounded-xl bg-slate-900/70 border border-slate-800">
+                            <i class="fa-solid fa-circle-check text-emerald-400 mt-0.5 text-xs"></i>
+                            <span>All vital signs within baseline physiological limits.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Security & Cryptographic Integrity Tag -->
+                <div class="mt-4 pt-3 border-t border-slate-800/90 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                    <span class="flex items-center gap-1.5 text-emerald-400">
+                        <i class="fa-solid fa-lock"></i> HMAC-SHA256 Protected
+                    </span>
+                    <span class="px-2 py-0.5 rounded bg-slate-900 text-slate-400 text-[10px]">Tamper-Proof</span>
+                </div>
+
+                <!-- Quick Action Link to Booking -->
+                <div class="mt-4">
+                    <a href="{{ url_for('appointments_page') }}" class="w-full py-2.5 rounded-xl font-bold text-xs bg-gradient-to-r from-slate-800 to-slate-700 hover:from-slate-700 hover:to-slate-600 text-cyan-300 border border-slate-700 transition-all flex items-center justify-center gap-2 shadow-sm">
+                        <span>Proceed to Doctor Scheduling</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Recent Intake Records Table -->
-    <div class="glass-card rounded-2xl p-6 sm:p-8 shadow-xl border border-slate-800">
-        <div class="flex items-center justify-between mb-5">
+    <!-- Recent Intake & Triage Activity Table -->
+    <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-800/90">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
-                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                <h3 class="text-lg font-black text-white flex items-center gap-2.5">
                     <i class="fa-solid fa-clock-rotate-left text-cyan-400"></i>
                     <span>Recent Intake & Triage Activity</span>
                 </h3>
-                <p class="text-xs text-slate-400">Latest evaluated patients across all hospital triage stations</p>
+                <p class="text-xs text-slate-400 mt-0.5">Audited clinical triage encounters stored in SQLite database</p>
             </div>
-            <a href="{{ url_for('patients_page') }}" class="text-xs font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
-                View Full Registry <i class="fa-solid fa-chevron-right text-[10px]"></i>
-            </a>
+            
+            <!-- Category Filter Buttons & Link -->
+            <div class="flex items-center gap-2 flex-wrap">
+                <input type="text" id="tableSearch" onkeyup="filterRecentTable()" placeholder="Search patient name, ID..."
+                       class="bg-slate-900/90 border border-slate-700/80 rounded-xl px-3.5 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+                <a href="{{ url_for('patients_page') }}" class="text-xs font-bold text-cyan-400 hover:text-cyan-300 flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-cyan-500/40 transition-all">
+                    <span>Full Registry</span>
+                    <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                </a>
+            </div>
         </div>
 
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs border-collapse">
+        <div class="overflow-x-auto rounded-2xl border border-slate-800/80">
+            <table id="recentActivityTable" class="w-full text-left text-xs border-collapse">
                 <thead>
-                    <tr class="border-b border-slate-800 text-slate-400 uppercase text-[10px] tracking-wider bg-slate-900/40">
-                        <th class="py-3 px-4">Patient</th>
-                        <th class="py-3 px-4">National ID</th>
-                        <th class="py-3 px-4">Vitals (HR / BP / SpO2 / Pain)</th>
-                        <th class="py-3 px-4">Category</th>
-                        <th class="py-3 px-4">Score</th>
-                        <th class="py-3 px-4">Timestamp</th>
-                        <th class="py-3 px-4">HMAC Integrity</th>
+                    <tr class="border-b border-slate-800 text-slate-400 uppercase text-[10px] tracking-wider bg-slate-900/70">
+                        <th class="py-3.5 px-4 font-bold">Patient Profile</th>
+                        <th class="py-3.5 px-4 font-bold">National ID</th>
+                        <th class="py-3.5 px-4 font-bold">Physiological Vitals</th>
+                        <th class="py-3.5 px-4 font-bold">Urgency Category</th>
+                        <th class="py-3.5 px-4 font-bold">Priority Score</th>
+                        <th class="py-3.5 px-4 font-bold">Timestamp</th>
+                        <th class="py-3.5 px-4 font-bold text-center">HMAC Integrity</th>
+                        <th class="py-3.5 px-4 font-bold text-right">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-800/60">
+                <tbody class="divide-y divide-slate-800/60 bg-slate-950/40">
                     {% for item in recent_triages %}
                     <tr class="hover:bg-slate-800/30 transition-colors">
-                        <td class="py-3 px-4 font-semibold text-white">
-                            {{ item.patient.full_name }}
-                            <span class="block text-[11px] text-slate-500 font-normal">Age: {{ item.patient.age }}</span>
+                        <!-- Patient Name & Age -->
+                        <td class="py-3.5 px-4">
+                            <div class="font-bold text-white text-sm flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center text-xs font-bold">
+                                    {{ item.patient.full_name[0] }}
+                                </div>
+                                <div>
+                                    <span>{{ item.patient.full_name }}</span>
+                                    <span class="block text-[11px] text-slate-400 font-normal">Age: {{ item.patient.age }} Years</span>
+                                </div>
+                            </div>
                         </td>
-                        <td class="py-3 px-4 font-mono text-slate-300">{{ item.patient.national_id }}</td>
-                        <td class="py-3 px-4 text-slate-300">
-                            <span class="font-mono">{{ item.record.heart_rate }} bpm | {{ item.record.systolic_bp }} mmHg | {{ item.record.sp02 }}% | Pain: {{ item.record.pain_score }}/10</span>
+
+                        <!-- National ID -->
+                        <td class="py-3.5 px-4 font-mono font-semibold text-cyan-300">
+                            {{ item.patient.national_id }}
                         </td>
-                        <td class="py-3 px-4">
+
+                        <!-- Vitals -->
+                        <td class="py-3.5 px-4 text-slate-300 font-mono text-[11px]">
+                            <div><span class="text-slate-500">HR:</span> <strong class="text-white">{{ item.record.heart_rate }}</strong> | <span class="text-slate-500">BP:</span> <strong class="text-white">{{ item.record.systolic_bp }}</strong></div>
+                            <div><span class="text-slate-500">SpO2:</span> <strong class="text-cyan-300">{{ item.record.sp02 }}%</strong> | <span class="text-slate-500">Pain:</span> <strong class="text-amber-400">{{ item.record.pain_score }}/10</strong></div>
+                        </td>
+
+                        <!-- Urgency Category -->
+                        <td class="py-3.5 px-4">
                             {% if item.record.urgency_category == 'Category 1' %}
-                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-950/60 text-rose-300 border border-rose-500/40 pulse-critical">
-                                    Cat 1 (Immediate)
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-950/80 text-rose-300 border border-rose-500/60 pulse-critical inline-flex items-center gap-1">
+                                    <i class="fa-solid fa-circle-exclamation text-[10px]"></i> Cat 1 (Immediate)
                                 </span>
                             {% elif item.record.urgency_category == 'Category 2' %}
-                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-950/60 text-amber-300 border border-amber-500/40">
-                                    Cat 2 (Emergent)
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-orange-950/80 text-orange-300 border border-orange-500/60 inline-flex items-center gap-1">
+                                    <i class="fa-solid fa-triangle-exclamation text-[10px]"></i> Cat 2 (Emergent)
                                 </span>
                             {% elif item.record.urgency_category == 'Category 3' %}
-                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-yellow-950/60 text-yellow-300 border border-yellow-500/40">
-                                    Cat 3 (Urgent)
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-yellow-950/80 text-yellow-300 border border-yellow-500/60 inline-flex items-center gap-1">
+                                    <i class="fa-solid fa-clock text-[10px]"></i> Cat 3 (Urgent)
                                 </span>
                             {% else %}
-                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-950/60 text-emerald-300 border border-emerald-500/40">
-                                    Cat 4 (Routine)
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-950/80 text-emerald-300 border border-emerald-500/60 inline-flex items-center gap-1">
+                                    <i class="fa-solid fa-check text-[10px]"></i> Cat 4 (Routine)
                                 </span>
                             {% endif %}
                         </td>
-                        <td class="py-3 px-4 font-bold text-white">{{ item.record.priority_score }}</td>
-                        <td class="py-3 px-4 text-slate-400 font-mono text-[11px]">{{ item.record.timestamp[:19].replace('T', ' ') }}</td>
-                        <td class="py-3 px-4">
-                            <span class="inline-flex items-center gap-1 text-[11px] text-emerald-400 bg-emerald-950/30 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                                <i class="fa-solid fa-circle-check text-[10px]"></i> Verified
+
+                        <!-- Priority Score -->
+                        <td class="py-3.5 px-4 font-mono font-black text-sm text-white">
+                            {{ item.record.priority_score }}
+                        </td>
+
+                        <!-- Timestamp -->
+                        <td class="py-3.5 px-4 text-slate-400 font-mono text-[11px]">
+                            {{ item.record.timestamp[:19].replace('T', ' ') }}
+                        </td>
+
+                        <!-- HMAC Checksum -->
+                        <td class="py-3.5 px-4 text-center">
+                            <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-400 bg-emerald-950/50 px-2.5 py-1 rounded-full border border-emerald-500/30" title="HMAC Signature: {{ item.record.checksum }}">
+                                <i class="fa-solid fa-shield-check text-xs"></i> Validated
                             </span>
+                        </td>
+
+                        <!-- Action -->
+                        <td class="py-3.5 px-4 text-right">
+                            <a href="{{ url_for('appointments_page', patient_id=item.patient.id) }}" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 transition-all inline-flex items-center gap-1">
+                                <i class="fa-solid fa-calendar-plus text-[11px]"></i> Book Slot
+                            </a>
                         </td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="7" class="py-6 text-center text-slate-500 text-xs">
+                        <td colspan="8" class="py-8 text-center text-slate-500 text-xs">
                             No triage records evaluated yet. Use the intake form above to add your first patient.
                         </td>
                     </tr>
@@ -377,46 +476,88 @@
 
 {% block extra_scripts %}
 <script>
-    function updatePainDisplay(val) {
-        const display = document.getElementById('painDisplay');
+    // Live Pain Display and Visuals
+    function updatePainVisuals(val) {
+        const badge = document.getElementById('painBadge');
+        val = parseInt(val) || 0;
+        
+        let emoji = '😊';
         let label = 'No Pain';
-        if (val >= 1 && val <= 4) label = `${val} - Mild`;
-        else if (val >= 5 && val <= 7) label = `${val} - Moderate (Cat 3)`;
-        else if (val >= 8) label = `${val} - Severe (Cat 2)`;
-        display.textContent = label;
+        let colorClass = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
+        
+        if (val === 0) {
+            emoji = '😊'; label = '0 — No Pain';
+            colorClass = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
+        } else if (val >= 1 && val <= 4) {
+            emoji = '😐'; label = `${val} — Mild Pain`;
+            colorClass = 'bg-teal-500/10 text-teal-300 border-teal-500/30';
+        } else if (val >= 5 && val <= 7) {
+            emoji = '😣'; label = `${val} — Moderate Pain (Cat 3)`;
+            colorClass = 'bg-yellow-500/10 text-yellow-300 border-yellow-500/30';
+        } else {
+            emoji = '🚨'; label = `${val} — Severe Pain (Cat 2)`;
+            colorClass = 'bg-rose-500/10 text-rose-300 border-rose-500/40';
+        }
+        
+        badge.className = `text-xs font-extrabold px-3 py-1 rounded-full border transition-all ${colorClass}`;
+        badge.textContent = `${emoji} ${label}`;
+        
+        calculateLiveTriage();
     }
 
+    // Load Clinical Demo Presets
     function loadPreset(type) {
         const hr = document.getElementById('heart_rate');
         const sbp = document.getElementById('systolic_bp');
         const sp02 = document.getElementById('sp02');
         const pain = document.getElementById('pain_score');
+        const name = document.getElementById('full_name');
+        const nid = document.getElementById('national_id');
+        const age = document.getElementById('age');
+        const contact = document.getElementById('contact');
 
         if (type === 'critical') {
-            hr.value = 152;
+            name.value = "Alexander Wright (Critical)";
+            nid.value = "NAT-2001";
+            age.value = 68;
+            contact.value = "+1-555-0911";
+            hr.value = 155;
             sbp.value = 72;
             sp02.value = 84.0;
             pain.value = 9;
         } else if (type === 'emergent') {
+            name.value = "Sophia Martinez (Emergent)";
+            nid.value = "NAT-2002";
+            age.value = 42;
+            contact.value = "+1-555-0922";
             hr.value = 125;
             sbp.value = 135;
             sp02.value = 92.0;
             pain.value = 8;
         } else if (type === 'urgent') {
-            hr.value = 105;
-            sbp.value = 124;
+            name.value = "Lucas Chen (Urgent)";
+            nid.value = "NAT-2003";
+            age.value = 35;
+            contact.value = "+1-555-0933";
+            hr.value = 106;
+            sbp.value = 125;
             sp02.value = 97.0;
             pain.value = 6;
         } else {
-            hr.value = 74;
+            name.value = "Olivia Brown (Routine)";
+            nid.value = "NAT-2004";
+            age.value = 28;
+            contact.value = "+1-555-0944";
+            hr.value = 72;
             sbp.value = 120;
             sp02.value = 99.0;
-            pain.value = 2;
+            pain.value = 1;
         }
-        updatePainDisplay(pain.value);
-        calculateLiveTriage();
+        
+        updatePainVisuals(pain.value);
     }
 
+    // Call Triage API to compute deterministic ESI output
     async function calculateLiveTriage() {
         const hr = parseInt(document.getElementById('heart_rate').value) || 75;
         const sbp = parseInt(document.getElementById('systolic_bp').value) || 120;
@@ -431,54 +572,72 @@
             });
             const data = await res.json();
             if (data.success) {
-                renderTriageResult(data.result);
+                renderLiveTriageOutput(data.result);
             }
         } catch (err) {
             console.error('Error calculating triage:', err);
         }
     }
 
-    function renderTriageResult(res) {
-        const banner = document.getElementById('categoryBanner');
-        const catLabel = document.getElementById('categoryLabel');
+    // Update the single Hero Banner and Score
+    function renderLiveTriageOutput(res) {
+        const heroBanner = document.getElementById('categoryHeroBanner');
+        const catPill = document.getElementById('categoryPill');
         const catTitle = document.getElementById('categoryTitle');
         const waitLimit = document.getElementById('waitLimit');
-        const scoreDisplay = document.getElementById('priorityScoreDisplay');
-        const preemption = document.getElementById('preemptionEligibility');
-        const list = document.getElementById('rationaleList');
+        const scoreNumber = document.getElementById('scoreNumber');
+        const preemptionBadge = document.getElementById('preemptionStatusBadge');
+        const rationaleList = document.getElementById('rationaleList');
 
-        catLabel.textContent = res.category;
+        catPill.textContent = res.category;
         catTitle.textContent = res.category_label;
-        waitLimit.textContent = `Recommended Max Wait: ≤ ${res.max_wait_minutes} minutes`;
-        scoreDisplay.innerHTML = `${res.priority_score} <span class="text-xs text-slate-500 font-normal">/ 100</span>`;
+        waitLimit.textContent = `Max Recommended Wait: ≤ ${res.max_wait_minutes} min`;
+        scoreNumber.textContent = res.priority_score;
 
-        // Update banner colors based on category
-        banner.className = 'p-5 rounded-2xl text-center relative overflow-hidden transition-all duration-300 ';
+        // Reset and apply theme classes based on category
         if (res.category === 'Category 1') {
-            banner.className += 'bg-rose-950/60 border border-rose-500/60 text-rose-300 pulse-critical';
-            preemption.innerHTML = '<span class="text-rose-400 font-bold">⚡ Emergency Override (Priority 100)</span>';
+            heroBanner.className = 'mt-5 p-5 rounded-2xl border text-center relative overflow-hidden transition-all duration-300 bg-rose-950/60 border-rose-500/70 pulse-critical';
+            catPill.className = 'inline-block text-[10px] font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/50 mb-1.5';
+            scoreNumber.className = 'text-3xl font-black text-rose-400';
+            preemptionBadge.innerHTML = '<span class="text-xs font-black text-rose-300 bg-rose-950/80 px-2.5 py-1 rounded-full border border-rose-500/60 pulse-critical">⚡ Emergency Preemption</span>';
         } else if (res.category === 'Category 2') {
-            banner.className += 'bg-amber-950/60 border border-amber-500/60 text-amber-300';
-            preemption.innerHTML = '<span class="text-amber-400 font-bold">⚡ Emergent Priority (Score 75)</span>';
+            heroBanner.className = 'mt-5 p-5 rounded-2xl border text-center relative overflow-hidden transition-all duration-300 bg-orange-950/60 border-orange-500/70';
+            catPill.className = 'inline-block text-[10px] font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full bg-orange-500/20 text-orange-300 border border-orange-500/50 mb-1.5';
+            scoreNumber.className = 'text-3xl font-black text-orange-400';
+            preemptionBadge.innerHTML = '<span class="text-xs font-black text-orange-300 bg-orange-950/80 px-2.5 py-1 rounded-full border border-orange-500/60">⚡ Emergent Priority</span>';
         } else if (res.category === 'Category 3') {
-            banner.className += 'bg-yellow-950/60 border border-yellow-500/60 text-yellow-300';
-            preemption.innerHTML = '<span class="text-yellow-400">Urgent Queue (Score 50)</span>';
+            heroBanner.className = 'mt-5 p-5 rounded-2xl border text-center relative overflow-hidden transition-all duration-300 bg-yellow-950/60 border-yellow-500/70';
+            catPill.className = 'inline-block text-[10px] font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/50 mb-1.5';
+            scoreNumber.className = 'text-3xl font-black text-yellow-400';
+            preemptionBadge.innerHTML = '<span class="text-xs font-bold text-yellow-300 bg-yellow-950/60 px-2.5 py-1 rounded-full border border-yellow-500/40">Urgent Queue</span>';
         } else {
-            banner.className += 'bg-emerald-950/60 border border-emerald-500/60 text-emerald-300';
-            preemption.innerHTML = '<span class="text-emerald-400">Routine Queue (Score 20)</span>';
+            heroBanner.className = 'mt-5 p-5 rounded-2xl border text-center relative overflow-hidden transition-all duration-300 bg-emerald-950/50 border-emerald-500/60';
+            catPill.className = 'inline-block text-[10px] font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 mb-1.5';
+            scoreNumber.className = 'text-3xl font-black text-emerald-400';
+            preemptionBadge.innerHTML = '<span class="text-xs font-bold text-emerald-300 bg-emerald-950/60 px-2.5 py-1 rounded-full border border-emerald-500/40">Routine Queue</span>';
         }
 
         // Render rationales
-        list.innerHTML = '';
+        rationaleList.innerHTML = '';
         res.clinical_rationale.forEach(r => {
             const li = document.createElement('li');
-            li.className = 'flex items-start gap-2 p-2 rounded-lg bg-slate-900/40 border border-slate-800/80';
-            li.innerHTML = `<i class="fa-solid fa-circle-chevron-right text-cyan-400 mt-0.5 text-[11px]"></i><span>${r}</span>`;
-            list.appendChild(li);
+            li.className = 'flex items-start gap-2 p-2.5 rounded-xl bg-slate-900/70 border border-slate-800';
+            li.innerHTML = `<i class="fa-solid fa-circle-chevron-right text-cyan-400 mt-0.5 text-xs"></i><span>${r}</span>`;
+            rationaleList.appendChild(li);
         });
     }
 
-    // Run initial calculation on page load
+    // Filter table records
+    function filterRecentTable() {
+        const filter = document.getElementById('tableSearch').value.toLowerCase();
+        const rows = document.querySelectorAll('#recentActivityTable tbody tr');
+        rows.forEach(r => {
+            const text = r.textContent.toLowerCase();
+            r.style.display = text.includes(filter) ? '' : 'none';
+        });
+    }
+
+    // Initial run on page load
     document.addEventListener('DOMContentLoaded', () => {
         calculateLiveTriage();
     });

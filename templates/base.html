@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-900 text-slate-100">
+<html lang="en" class="h-full bg-[#070b14] text-slate-100">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Secure Clinical Triage & Appointment Management System{% endblock %}</title>
+    <title>{% block title %}AegisHealth — Clinical Triage & Secure Appointment System{% endblock %}</title>
+    
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -12,120 +13,187 @@
             theme: {
                 extend: {
                     colors: {
-                        clinical: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                            900: '#0c4a6e',
+                        brand: {
+                            50: '#ecfeff',
+                            100: '#cffafe',
+                            400: '#22d3ee',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            700: '#0e7490',
                         },
-                        urgent: {
-                            500: '#f59e0b',
-                            600: '#d97706',
+                        cat1: {
+                            bg: 'rgba(225, 29, 72, 0.15)',
+                            border: 'rgba(244, 63, 94, 0.5)',
+                            text: '#fda4af',
+                            glow: '#f43f5e',
                         },
-                        critical: {
-                            500: '#ef4444',
-                            600: '#dc2626',
+                        cat2: {
+                            bg: 'rgba(234, 88, 12, 0.15)',
+                            border: 'rgba(251, 146, 60, 0.5)',
+                            text: '#fed7aa',
+                            glow: '#fb923c',
                         },
-                        stable: {
-                            500: '#10b981',
-                            600: '#059669',
+                        cat3: {
+                            bg: 'rgba(202, 138, 4, 0.15)',
+                            border: 'rgba(250, 204, 21, 0.5)',
+                            text: '#fef08a',
+                            glow: '#facc15',
+                        },
+                        cat4: {
+                            bg: 'rgba(5, 150, 105, 0.15)',
+                            border: 'rgba(52, 211, 153, 0.5)',
+                            text: '#a7f3d0',
+                            glow: '#34d399',
                         }
                     },
                     fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
+                        sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
                     }
                 }
             }
         }
     </script>
+    
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .glass-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: radial-gradient(circle at 50% 0%, #0d1527 0%, #070b14 100%);
+            min-height: 100vh;
         }
-        .glass-header {
-            background: rgba(15, 23, 42, 0.85);
+        
+        /* Modern Glassmorphism System */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.65);
             backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        
+        .glass-card-hover {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card-hover:hover {
+            background: rgba(22, 33, 60, 0.75);
+            border-color: rgba(34, 211, 238, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 36px 0 rgba(6, 182, 212, 0.12);
+        }
+        
+        .glass-nav {
+            background: rgba(7, 11, 20, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .pulse-critical {
-            animation: pulse-red 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        
+        /* Ambient Glow Highlights */
+        .glow-cyan {
+            box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.4);
         }
-        @keyframes pulse-red {
-            0%, 100% { opacity: 1; }
-            50% { opacity: .5; }
+        .glow-rose {
+            box-shadow: 0 0 25px -5px rgba(244, 63, 94, 0.45);
+        }
+        
+        /* Pulse Animation for Critical Cases */
+        .pulse-critical {
+            animation: pulse-glow 1.8s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 15px rgba(244, 63, 94, 0.3);
+                border-color: rgba(244, 63, 94, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(244, 63, 94, 0.7);
+                border-color: rgba(244, 63, 94, 0.9);
+            }
+        }
+        
+        /* Subtle Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #070b14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0891b2;
         }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
-<body class="h-full flex flex-col bg-slate-950 text-slate-200 antialiased selection:bg-cyan-500 selection:text-white">
+<body class="h-full flex flex-col text-slate-200 antialiased selection:bg-cyan-500 selection:text-white">
 
     <!-- Top Navigation Bar -->
-    <header class="sticky top-0 z-50 glass-header">
+    <header class="sticky top-0 z-50 glass-nav">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 
-                <!-- Brand & Logo -->
+                <!-- Brand Logo -->
                 <div class="flex items-center space-x-3">
                     <a href="{{ url_for('dashboard') }}" class="flex items-center space-x-3 group">
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform duration-200">
-                            <i class="fa-solid fa-heart-pulse text-white text-lg"></i>
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/25 group-hover:scale-105 group-hover:shadow-cyan-500/40 transition-all duration-300">
+                            <i class="fa-solid fa-heart-pulse text-white text-lg animate-pulse"></i>
                         </div>
                         <div>
-                            <div class="text-base font-bold tracking-tight text-white flex items-center gap-2">
-                                <span>AegisHealth</span>
-                                <span class="text-[10px] px-2 py-0.5 rounded-full font-semibold uppercase tracking-wider bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">ESI v1.0</span>
+                            <div class="text-base font-extrabold tracking-tight text-white flex items-center gap-2">
+                                <span class="bg-gradient-to-r from-white via-slate-100 to-cyan-300 bg-clip-text text-transparent">AegisHealth</span>
+                                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">ESI v1.0</span>
                             </div>
-                            <p class="text-xs text-slate-400">Secure Clinical Triage & Appointments</p>
+                            <p class="text-[11px] text-slate-400">Clinical Triage & Appointment Engine</p>
                         </div>
                     </a>
                 </div>
 
-                <!-- Center Nav Links -->
-                {% if session.get('user_id') %}
-                <nav class="hidden md:flex items-center space-x-1">
+                <!-- Center Navigation Tabs -->
+                <nav class="hidden md:flex items-center space-x-1.5 p-1 rounded-xl bg-slate-900/80 border border-slate-800">
                     <a href="{{ url_for('dashboard') }}" 
-                       class="px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-150 flex items-center gap-2 {% if active_page == 'dashboard' %}bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 shadow-sm{% else %}text-slate-300 hover:text-white hover:bg-slate-800/60{% endif %}">
-                        <i class="fa-solid fa-gauge text-xs"></i>
+                       class="px-4 py-2 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-2 {% if active_page == 'dashboard' %}bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm shadow-cyan-500/10{% else %}text-slate-400 hover:text-white hover:bg-slate-800/60{% endif %}">
+                        <i class="fa-solid fa-gauge-high text-xs"></i>
                         <span>Triage Intake</span>
                     </a>
                     <a href="{{ url_for('appointments_page') }}" 
-                       class="px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-150 flex items-center gap-2 {% if active_page == 'appointments' %}bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 shadow-sm{% else %}text-slate-300 hover:text-white hover:bg-slate-800/60{% endif %}">
+                       class="px-4 py-2 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-2 {% if active_page == 'appointments' %}bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm shadow-cyan-500/10{% else %}text-slate-400 hover:text-white hover:bg-slate-800/60{% endif %}">
                         <i class="fa-solid fa-calendar-check text-xs"></i>
-                        <span>Appointments & Overrides</span>
+                        <span>Doctor Schedule & Queue</span>
                     </a>
                     <a href="{{ url_for('patients_page') }}" 
-                       class="px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-150 flex items-center gap-2 {% if active_page == 'patients' %}bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 shadow-sm{% else %}text-slate-300 hover:text-white hover:bg-slate-800/60{% endif %}">
+                       class="px-4 py-2 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-2 {% if active_page == 'patients' %}bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm shadow-cyan-500/10{% else %}text-slate-400 hover:text-white hover:bg-slate-800/60{% endif %}">
                         <i class="fa-solid fa-hospital-user text-xs"></i>
                         <span>Patient Registry</span>
                     </a>
                 </nav>
-                {% endif %}
 
-                <!-- User Profile & System Status -->
+                <!-- System Status & User Actions -->
                 <div class="flex items-center space-x-3">
-                    <div class="hidden sm:flex items-center space-x-2 px-2.5 py-1 rounded-full bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 text-xs">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span class="font-medium">SQLite & HMAC Active</span>
+                    <!-- Live Cryptographic & SQLite Status -->
+                    <div class="hidden sm:flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-xs shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                        <span class="font-medium text-[11px]"><i class="fa-solid fa-shield-halved mr-1 text-emerald-400"></i> HMAC & SQLite Active</span>
                     </div>
 
                     {% if session.get('user_id') %}
                     <div class="flex items-center space-x-3 pl-3 border-l border-slate-800">
                         <div class="text-right hidden sm:block">
-                            <div class="text-sm font-semibold text-white">{{ session.get('username') }}</div>
-                            <div class="text-[11px] text-cyan-400 font-mono">{{ session.get('role') }}</div>
+                            <div class="text-xs font-bold text-white">{{ session.get('username') }}</div>
+                            <div class="text-[10px] text-cyan-400 font-mono">{{ session.get('role') }}</div>
                         </div>
-                        <div class="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300">
+                        <div class="w-9 h-9 rounded-xl bg-slate-800/80 border border-slate-700/80 flex items-center justify-center text-slate-300 shadow-inner">
                             {% if session.get('role') == 'Doctor' %}
                                 <i class="fa-solid fa-user-doctor text-sm text-cyan-400"></i>
                             {% elif session.get('role') == 'Triage_Nurse' %}
@@ -135,11 +203,11 @@
                             {% endif %}
                         </div>
                         <a href="{{ url_for('logout') }}" title="Logout" class="p-2 text-slate-400 hover:text-rose-400 rounded-lg hover:bg-slate-800/60 transition-colors">
-                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <i class="fa-solid fa-right-from-bracket text-sm"></i>
                         </a>
                     </div>
                     {% else %}
-                    <a href="{{ url_for('login_page') }}" class="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 rounded-lg shadow-md transition-all shadow-cyan-500/20">
+                    <a href="{{ url_for('login_page') }}" class="px-4 py-2 text-xs font-bold text-white bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 rounded-xl shadow-lg shadow-cyan-500/20 transition-all">
                         <i class="fa-solid fa-lock mr-1.5 text-xs"></i> Staff Login
                     </a>
                     {% endif %}
@@ -148,28 +216,26 @@
         </div>
     </header>
 
-    <!-- Main Content Container -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        <!-- Flash Alerts Container -->
+    <!-- Global Flash Notification Banner -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-                <div class="mb-6 space-y-3">
+                <div class="mb-6 space-y-2">
                     {% for category, message in messages %}
-                        <div class="p-4 rounded-xl text-sm flex items-center justify-between border shadow-lg {% if category == 'error' %}bg-rose-950/60 border-rose-500/40 text-rose-200{% elif category == 'success' %}bg-emerald-950/60 border-emerald-500/40 text-emerald-200{% elif category == 'warning' %}bg-amber-950/60 border-amber-500/40 text-amber-200{% else %}bg-cyan-950/60 border-cyan-500/40 text-cyan-200{% endif %}">
-                            <div class="flex items-center space-x-3">
-                                {% if category == 'error' %}
-                                    <i class="fa-solid fa-circle-exclamation text-rose-400 text-base"></i>
-                                {% elif category == 'success' %}
+                        <div class="p-4 rounded-2xl flex items-center justify-between border backdrop-blur-md shadow-lg transition-all {% if category == 'success' %}bg-emerald-950/70 border-emerald-500/50 text-emerald-200{% elif category == 'danger' or category == 'error' %}bg-rose-950/70 border-rose-500/50 text-rose-200{% elif category == 'warning' %}bg-amber-950/70 border-amber-500/50 text-amber-200{% else %}bg-cyan-950/70 border-cyan-500/50 text-cyan-200{% endif %}">
+                            <div class="flex items-center gap-3 text-xs font-semibold">
+                                {% if category == 'success' %}
                                     <i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+                                {% elif category == 'danger' or category == 'error' %}
+                                    <i class="fa-solid fa-triangle-exclamation text-rose-400 text-base"></i>
                                 {% elif category == 'warning' %}
-                                    <i class="fa-solid fa-triangle-exclamation text-amber-400 text-base"></i>
+                                    <i class="fa-solid fa-circle-exclamation text-amber-400 text-base"></i>
                                 {% else %}
                                     <i class="fa-solid fa-circle-info text-cyan-400 text-base"></i>
                                 {% endif %}
-                                <span class="font-medium">{{ message }}</span>
+                                <span>{{ message }}</span>
                             </div>
-                            <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white transition-colors">
+                            <button onclick="this.parentElement.remove()" class="text-xs text-slate-400 hover:text-white p-1">
                                 <i class="fa-solid fa-xmark"></i>
                             </button>
                         </div>
@@ -178,19 +244,21 @@
             {% endif %}
         {% endwith %}
 
+        <!-- Child Page Body Content -->
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
-    <footer class="border-t border-slate-800/80 bg-slate-950 py-6 text-center text-xs text-slate-500">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-            <div>
-                <span class="font-semibold text-slate-400">Secure Patient Appointment & Triage Management System</span> — Python 3.10+ & SQLite3
+    <!-- Global Minimal Footer -->
+    <footer class="mt-auto py-6 border-t border-slate-800/80 bg-slate-950/70 text-slate-500 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                <span><strong>AegisHealth System</strong> — Secure Patient Appointment & Triage Engine</span>
             </div>
-            <div class="flex items-center space-x-4 text-slate-400">
-                <span><i class="fa-solid fa-shield text-cyan-400 mr-1"></i> PBKDF2-HMAC-SHA256</span>
-                <span><i class="fa-solid fa-lock text-emerald-400 mr-1"></i> HMAC-Integrity</span>
-                <span><i class="fa-solid fa-vial text-purple-400 mr-1"></i> 66 PyTest Passing</span>
+            <div class="flex items-center gap-4 font-mono text-[11px] text-slate-400">
+                <span><i class="fa-solid fa-key text-cyan-400 mr-1"></i> PBKDF2-HMAC-SHA256</span>
+                <span><i class="fa-solid fa-database text-blue-400 mr-1"></i> SQLite Persistence</span>
+                <span><i class="fa-solid fa-vial-circle-check text-emerald-400 mr-1"></i> 66 PyTests Passing</span>
             </div>
         </div>
     </footer>
